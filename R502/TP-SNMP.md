@@ -140,5 +140,55 @@ ven. 08 sept. 2023 10:22:39 CEST\n
 ven. 08 sept. 2023 10:22:40 CEST\n
 ```
 
+-Ajout du monitoring sur les processus apache
+
+```bash
+#
+#  Process Monitoring
+#
+proc  apache2 1 0
+```
+
+On envoit une alerte si il y a au moins 0 processus et maximum 1
+
+ ```bash
+root@debian:~# snmpwalk localhost -v2c -c public UCD-SNMP-MIB::prTable
+UCD-SNMP-MIB::prIndex.1 = INTEGER: 1
+UCD-SNMP-MIB::prNames.1 = STRING: apache2
+UCD-SNMP-MIB::prMin.1 = INTEGER: 0
+UCD-SNMP-MIB::prMax.1 = INTEGER: 1
+UCD-SNMP-MIB::prCount.1 = INTEGER: 3
+UCD-SNMP-MIB::prErrorFlag.1 = INTEGER: error(1)
+UCD-SNMP-MIB::prErrMessage.1 = STRING: Too many apache2 running (# = 3)
+UCD-SNMP-MIB::prErrFix.1 = INTEGER: noError(0)
+UCD-SNMP-MIB::prErrFixCmd.1 = STRING:
+ ```
+
+ On voit bien une erreur.
 
 
+ - Script nbprocess dans /usr/bin
+```bash
+#!/bin/bash
+ps -ef | wc -l
+```
+
+- Ajout du script dans la config snmpd.conf
+```bash
+###############################################################################
+#
+#  EXTENDING THE AGENT
+#
+
+#
+#  Arbitrary extension commands
+#
+
+ exec nbprocess /bin/sh /usr/bin/nbprocess.sh
+```
+
+- Recupérer le nombre de process depuis une requête snmp avec notre script:
+```bash
+root@debian:~# snmpwalk -v2c -c public localhost 'NET-SNMP-EXTEND-MIB:nsExtendOutLine."nbprocess"'
+NET-SNMP-EXTEND-MIB::nsExtendOutLine."nbprocess".1 = STRING: 120
+```
