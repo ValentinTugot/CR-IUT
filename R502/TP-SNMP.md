@@ -61,6 +61,84 @@ SNMP table: UCD-SNMP-MIB::laTable
        3 Load-15   0.00     5.00         0    0.000000     noError
 ```
 
--
+- Afficher la table des IO
+```bash
+root@b20efae1e564:/# snmptable -v2c -c publicbeziers 172.17.0.3 UCD-DISKIO-MIB::diskIOTable
+SNMP table: UCD-DISKIO-MIB::diskIOTable
+
+ diskIOIndex diskIODevice diskIONRead diskIONWritten diskIOReads diskIOWrites diskIOLA1 diskIOLA5 diskIOLA15 diskIONReadX diskIONWrittenX diskIOBusyTime
+           1      nvme0n1  2750980096     2937402368       90364        45432         0         0          0   2750980096      2937402368              ?
+           2    nvme0n1p1     8256512           5120         242            3         0         0          0      8256512            5120              ?
+           3    nvme0n1p2  2737206272     2937397248       89926        44129         0         0          0   2737206272      2937397248              ?
+           4    nvme0n1p3     3588096              0         109            0         0         0          0      3588096               0              ?
+           5        loop0     1129472              0          78            0         0         0          0      1129472               0              ?
+           6        loop1     1136640              0          75            0         0         0          0      1136640               0              ?
+           7        loop2     1738752              0         343            0         0         0          0      1738752               0              ?
+           8        loop3      952320              0         312            0         0         0          0       952320               0              ?
+           9        loop4      974848              0         321            0         0         0          0       974848               0              ?
+          10        loop5      936960              0         305            0         0         0          0       936960               0              ?
+          11        loop6    23323648              0         968            0         0         0          0     23323648               0              ?
+          12        loop7     1012736              0         338            0         0         0          0      1012736               0              ?
+          13        loop8     2075648              0         554            0         0         0          0      2075648               0              ?
+          14        loop9    14152704              0         419            0         0         0          0     14152704               0              ?
+          15       loop10     1855488              0         396            0         0         0          0      1855488               0              ?
+          16       loop11    17324032              0        1018            0         0         0          0     17324032               0              ?
+          17       loop12    18576384              0         687            0         0         0          0     18576384               0              ?
+          18       loop13    13441024              0        1031            0         0         0          0     13441024               0              ?
+          19       loop14     1089536              0         419            0         0         0          0      1089536               0              ?
+          20       loop15    23774208              0         702            0         0         0          0     23774208               0              ?
+```
+
+### 3. Installation d'un serveur SNMP ###
+
+2. Affiche\.sh
+
+```bash
+root@debian:/usr/bin# cat affiche.sh 
+#!/bin/bash
+echo "$(date)\n" >> /tmp/montrap
+```
+
+- /etc/snmp/snmptrapd.conf edit
+```bash
+root@debian:/usr/bin# cat /etc/snmp/snmptrapd.conf 
+
+#
+# EXAMPLE-trap.conf:
+#   An example configuration file for configuring the Net-SNMP snmptrapd agent.
+#
+###############################################################################
+#
+# This file is intended to only be an example.
+# When the snmptrapd agent starts up, this is where it will look for it.
+#
+# All lines beginning with a '#' are comments and are intended for you
+# to read.  All other lines are configuration commands for the agent.
+
+#
+# PLEASE: read the snmptrapd.conf(5) manual page as well!
+#
+#authCommunity log,execute,net private　
+authCommunity log,execute,net public
+#
+## send mail when get any events
+traphandle default /bin/bash /usr/bin/affiche.sh
+#
+## send mail when get linkDown
+#traphandle .1.3.6.1.6.3.1.1.5.3 /usr/bin/traptoemail -s smtp.example.org foobar@example.org
+
+```
+
+Le fichier /tmp/montrap s'incrémente bien à l'envoie de trap:
+```bash
+root@debian:/tmp# snmptrap -v 2c -c public localhost "" UCD-SNMP-MIB::ucdStart
+root@debian:/tmp# snmptrap -v 2c -c public localhost "" UCD-SNMP-MIB::ucdStart
+root@debian:/tmp# snmptrap -v 2c -c public localhost "" UCD-SNMP-MIB::ucdStart
+root@debian:/tmp# cat /tmp/montrap 
+ven. 08 sept. 2023 10:22:37 CEST\n
+ven. 08 sept. 2023 10:22:39 CEST\n
+ven. 08 sept. 2023 10:22:40 CEST\n
+```
+
 
 
