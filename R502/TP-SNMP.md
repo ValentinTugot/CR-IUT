@@ -255,3 +255,28 @@ git clone https://github.com/cisco/cisco-mibs.git
 Ensuite, on importe les MIB dans le browser pour parcourir le switch:
 
 ![cisco-browser](3.png)
+
+### 6. SNMP v3 ###
+
+1. Creer l'utilisateur
+
+```bash
+root@debian:~# sudo net-snmp-config --create-snmpv3-user -a SHA -A valentintugot66 -x AES -X tugotvalentin66 securev3user
+adding the following line to /var/lib/snmp/snmpd.conf:
+   createUser securev3user SHA "valentintugot66" AES "tugotvalentin66"
+adding the following line to /snmp/snmpd.conf:
+   rwuser securev3user
+```
+
+2. Requête
+   
+```bash
+root@debian:~# snmptable -v3 -u securev3user -l authPriv -a SHA -A valentintugot66 -x AES -X tugotvalentin66 localhost IF-MIB::ifTable
+Bad operator (INTEGER): At line 73 in /usr/share/snmp/mibs/ietf/SNMPv2-PDU
+SNMP table: IF-MIB::ifTable
+
+ ifIndex                                               ifDescr           ifType ifMtu    ifSpeed    ifPhysAddress ifAdminStatus ifOperStatus ifLastChange ifInOctets ifInUcastPkts ifInNUcastPkts ifInDiscards ifInErrors ifInUnknownProtos ifOutOctets ifOutUcastPkts ifOutNUcastPkts ifOutDiscards ifOutErrors ifOutQLen              ifSpecific
+       1                                                    lo softwareLoopback 65536   10000000                             up           up 0:0:00:00.00  684031796       3496790              0            0          0                 0   684031796        3496790               0             0           0         0 SNMPv2-SMI::zeroDotZero
+       2 Intel Corporation 82540EM Gigabit Ethernet Controller   ethernetCsmacd  1500 1000000000  8:0:27:ff:c0:ca            up           up 0:0:00:00.00 1713825220       1355585          12950            2          0                 0   437660579         993417               0             0           0         0 SNMPv2-SMI::zeroDotZero
+       3                                               docker0   ethernetCsmacd  1500          0 2:42:28:47:8d:e2            up         down 0:0:00:00.00          0             0              0            0          0                 0           0              0               0             0           0         0 SNMPv2-SMI::zeroDotZero
+```
