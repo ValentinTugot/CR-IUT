@@ -192,3 +192,66 @@ ps -ef | wc -l
 root@debian:~# snmpwalk -v2c -c public localhost 'NET-SNMP-EXTEND-MIB:nsExtendOutLine."nbprocess"'
 NET-SNMP-EXTEND-MIB::nsExtendOutLine."nbprocess".1 = STRING: 120
 ```
+
+### 4. SNMP sur switch CISCO ###
+
+J'ai configuré le switch avec les commandes dans le sujet.
+
+```bash
+Switch#sh snmp                    
+Chassis: FOC1329V3W0
+0 SNMP packets input
+    0 Bad SNMP version errors
+    0 Unknown community name
+    0 Illegal operation for community name supplied
+    0 Encoding errors
+    0 Number of requested variables
+    0 Number of altered variables
+    0 Get-request PDUs
+    0 Get-next PDUs
+    0 Set-request PDUs
+    0 Input queue packet drops (Maximum queue size 1000)
+47 SNMP packets output
+    0 Too big errors (Maximum packet size 1500)
+    0 No such name errors
+    0 Bad values errors
+    0 General errors
+    0 Response PDUs
+    47 Trap PDUs
+SNMP global trap: enabled
+
+SNMP logging: enabled
+    Logging to 10.202.0.152.162, 0/10, 25 sent, 4 dropped.
+    Logging to 10.202.6.1.162, 0/10, 18 sent, 0 dropped.
+SNMP agent enabled
+```
+
+On voit que le switch envoie des paquets SNMP vers le serveur.
+
+Test SNMP sur le switch:
+```bash
+root@debian:/var/log# snmptable -v2c -c publicbeziers 10.202.0.102 IF-MIB::ifTable
+SNMP table: IF-MIB::ifTable
+
+ ifIndex          ifDescr         ifType ifMtu    ifSpeed    ifPhysAddress ifAdminStatus ifOperStatus ifLastChange ifInOctets ifInUcastPkts ifInNUcastPkts ifInDiscards ifInErrors ifInUnknownProtos ifOutOctets ifOutUcastPkts ifOutNUcastPkts ifOutDiscards ifOutErrors ifOutQLen ifSpecific
+       1            Vlan1    propVirtual  1500 1000000000 0:26:98:9b:8c:c0            up           up 0:2:34:23.53    1209067         13687              ?            0          0                 0       60885            586               ?             0           0         ?          ?
+   10001  FastEthernet0/1 ethernetCsmacd  1500  100000000 0:26:98:9b:8c:81            up           up 0:2:33:55.52    2091554           913              ?            0          0            
+```
+
+### 5. Installation d'un browser de MIB ###
+
+1. 
+
+![MIB-Browser](1.png)
+
+3. On peut voir les informations sur le stockage dans le MIB-Browser
+![hrStorageSize](2.png)
+
+5. On télécharge les mib depuis le répo git cisco:
+```bash
+git clone https://github.com/cisco/cisco-mibs.git
+```
+
+Ensuite, on importe les MIB dans le browser pour parcourir le switch:
+
+![cisco-browser](3.png)
