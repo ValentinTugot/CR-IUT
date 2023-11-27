@@ -536,3 +536,40 @@ done
 ```
 
 Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part4-ansible/) est très complète.
+<br>
+
+## 6. Configuration de l'accès OpenVPN au lab
+
+Afin d'accéder au lab depuis les machines de la salle pour pouvoir lancer des attaques ou bien modifer la configuration, nous avons mit en place un server OpenVPN sur le pfSense permettant d'accéder à toutes les machines du lab.
+<br>
+
+![server](img/vpn-server.png)
+
+Avec ce serveur, il faut créer différents utilisateurs qui pourront se connecter au VPN:
+
+![users](img/users.png)
+
+On peut ensuite récupérer le fichier openvpn pour chaque utilisateur:
+
+![dl](img/download.png)
+En cliquant sur "Most Clients" on obtient le fichier openvpn qui nous permet de nous connecter au VPN.
+<br>
+
+Test de connexion:
+
+![vpn](img/vpn-conn.png)
+<br>
+
+```bash
+test@202-6:~/Téléchargements$ ping 192.168.10.10
+PING 192.168.10.10 (192.168.10.10) 56(84) bytes of data.
+64 bytes from 192.168.10.10: icmp_seq=1 ttl=127 time=1.14 ms
+64 bytes from 192.168.10.10: icmp_seq=2 ttl=127 time=1.26 ms
+^C
+--- 192.168.10.10 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 1.136/1.196/1.256/0.060 
+```
+<br>
+
+Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part5-openvpn/) est très complète.
