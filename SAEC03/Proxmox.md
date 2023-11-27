@@ -326,6 +326,92 @@ packer build -var-file=windows_server2016_proxmox_cloudinit.pkvars.hcl .
 
 Enfin, on obtient sur le proxmox les templates bien crées:
 
+<center>
+
 ![template-prox](img/template.png)
+<br>
+</center>
 
+## Création des VM avec Terraform
 
+Pour préparer la création des VM avec terraform, il faut accorder plus de droits à notre utilisateur "infra":
+
+```bash
+pveum acl modify / -user 'infra_as_code@pve' -role Administrator
+```
+<br>
+
+__Configuration de terraform__
+
+Avant de lancer terraform, il faut définir certaines options liés à notre proxmox (comme pour packer). 
+
+```bash
+cd /root/GOAD/ad/GOAD/providers/proxmox/terraform
+cp variables.template variables.tf
+```
+
+Voici les valeurs inscrites dans mon variables\.tf:
+
+```bash
+root@provisioning:~/GOAD/ad/GOAD/providers/proxmox/terraform# cat variables.tf
+variable "pm_api_url" {
+  default = "https://192.168.1.1:8006/api2/json"
+}
+
+variable "pm_user" {
+  default = "infra@pve"
+}
+
+variable "pm_password" {
+  default = "infra"
+}
+
+variable "pm_node" {
+  default = "pvegroup2"
+}
+
+variable "pm_pool" {
+  default = "GOAD"
+}
+
+variable "pm_full_clone" {
+  default = false
+}
+```
+<br>
+
+Le fichier _goad\.tf_ contient les recêtes terraform pour chaque VM, voici l'exemple pour la machine DC01:
+
+```bash
+root@provisioning:~/GOAD/ad/GOAD/providers/proxmox/terraform# cat goad.tf
+resource "proxmox_vm_qemu" "dc01" {
+    name = "GOAD-DC01"
+    desc = "DC01 - windows server 2019 - 192.168.10.10"
+    qemu_os = "win10"
+    target_node = var.pm_node
+    pool = var.pm_pool
+
+    sockets = 1
+    cores = 2
+    memory = 3096
+    agent = 1
+    clone = "WinServer2019x64-cloudinit-qcow2"
+    full_clone = var.pm_full_clone
+
+   network {
+     bridge    = "vmbr3"
+     model     = "e1000"
+     tag       = 10
+   }
+    lifecycle {
+      ignore_changes = [
+        disk,
+      ]
+    }
+   nameserver = "192.168.10.1"
+   ipconfig0 = "ip=192.168.10.10/24,gw=192.168.10.1"
+}
+```
+<br>
+
+En cas de problème lors de l'installation avec terraform, il est possible de modifier le champ "nameserver" par 8.8.8.8 ou un autre DNS publique.
