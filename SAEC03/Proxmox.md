@@ -415,3 +415,27 @@ resource "proxmox_vm_qemu" "dc01" {
 <br>
 
 En cas de problème lors de l'installation avec terraform, il est possible de modifier le champ "nameserver" par 8.8.8.8 ou un autre DNS publique.
+<br>
+
+__Création des VM__
+
+Une fois Terraform configurer on peut lancer la création des VM:
+
+```bash
+terraform init
+```
+
+On crée le plan de création des VM et on applique ce plan:
+
+```bash
+terraform plan -out goad.plan
+terraform apply "goad.plan"
+```
+<br>
+
+Après un petit temps d'attente, les VM sont bien créés dans le proxmox.
+
+<center>
+
+![vm-creat](img/vm-work.png)
+</center>
