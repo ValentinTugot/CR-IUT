@@ -435,7 +435,7 @@ terraform apply "goad.plan"
 
 Après un petit temps d'attente, les VM sont bien créés dans le proxmox.
 
-<center>
+<div style="text-align:center">
 
 ![vm-creat](img/vm-work.png)
-</center>
+</div>
