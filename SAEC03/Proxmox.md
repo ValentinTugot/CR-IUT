@@ -29,7 +29,7 @@ ssh -L 8082:192.168.1.2:80 root@10.202.100.200
 
 Une fois la VM installé j'ai configuré les interfaces du pare-feu:
 <br>
-J'ai assigné chaque interface du pare-feu à un bridge du proxmox crée précedemment
+J'ai assigné chaque interface du pare-feu à un bridge du proxmox crée précédemment
 
 ![assignement](img/2.png)
 
@@ -57,7 +57,7 @@ __Interface LAN:__
 
 ![lan-fw](img/lan-f<.png)
 
-Pour l'interface LAN on configure 1 règles (la 1ère règles et configuré automatiquement par pfSense). La règle à ajouter permet aux machines sur le réseau LAN d'accèder à Internet et à tout les autres services.
+Pour l'interface LAN on configure 1 règles (la 1ère règles et configuré automatiquement par pfSense). La règle à ajouter permet aux machines sur le réseau LAN d’accéder à Internet et à tout les autres services.
 <br>
 
 __Interface VLAN10:__
@@ -104,7 +104,7 @@ Enfin, on configure un server DHCP pour le VLAN afin d'adresser les machines Win
 
 ## 2. Machine d'approvisionnement
 
-On va déployer un container linux à l'aide des CT Templates de proxmox. Pour cela, on se rends dans l'onglet CT Template, on recupère une template Ubuntu depuis l'onglet Templates en haut. Une vois la template Ubuntu téléchargé, on peut cliquer en haut à droite sur "Create CT".
+On va déployer un container linux à l'aide des CT Templates de proxmox. Pour cela, on se rends dans l'onglet CT Template, on récupère une template Ubuntu depuis l'onglet Templates en haut. Une vois la template Ubuntu téléchargé, on peut cliquer en haut à droite sur "Create CT".
 
 ![ct-create](img/ct.png)
 <br>
@@ -128,7 +128,7 @@ __Installation de Packer__
 Packer va servir à créer des templates des serveurs que nous allons déployer (Windows 2016 et 2019).
 
 ```bash
-#Ajout du répository de packer et de sa signature
+#Ajout du repository de packer et de sa signature
 curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 sudo apt update && apt install packer
@@ -172,7 +172,7 @@ python3 -m pip install pywinrm
 ```
 <br>
 
-Il nous suffit maintenant de cloner le répository GOAD pour pouvoir attaquer la création de template:
+Il nous suffit maintenant de cloner le repository GOAD pour pouvoir attaquer la création de template:
 
 ```bash
 cd /root
@@ -181,7 +181,7 @@ git clone https://github.com/Orange-Cyberdefense/GOAD.git
 
 ## 3. Création des templates avec Packer
 
-Dans un premier temps, il faut télécharger les iso Windows 2016 et les mettres sur le proxmox via la fonctionnalité "Download from URL", voici les liens pour télécharger les iso:
+Dans un premier temps, il faut télécharger les iso Windows 2016 et les mettre sur le proxmox via la fonctionnalité "Download from URL", voici les liens pour télécharger les iso:
 - [Windows Server 2016](https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO)
 - [Windows Server 2019](https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso)
 <br>
@@ -221,7 +221,7 @@ pveum acl modify / -user 'infra@pve' -role Packer
 
 __Préparation de Packer__
 
-Pour que packer puisse éxecuter le script qui créer les templates, il faut lui renseigner certaines informations sur l'architecture de notre proxmox (comme l'utilisateur et le mot de passe par exemple). Pour celà on recupère le fichier d'exemple que l'on copie afin de le modifier:
+Pour que packer puisse exécuter le script qui créer les templates, il faut lui renseigner certaines informations sur l'architecture de notre proxmox (comme l'utilisateur et le mot de passe par exemple). Pour cela on récupère le fichier d'exemple que l'on copie afin de le modifier:
 
 ```bash
 cd /root/GOAD/packer/proxmox/
@@ -245,5 +245,5 @@ proxmox_storage         = "GOAD"
 
 __Préparation des ISO__
 
-Afin de créer des templates avec Packer et promox, il est necessaire de créer des ISO qui contiennent les différents script necessaires.<br>
-Pour faire cela, un script est disponible dans le répo git de GOAD.
+Afin de créer des templates avec Packer et proxmox, il est nécessaire de créer des ISO qui contiennent les différents script nécessaires.<br>
+Pour faire cela, un script est disponible dans le repo git de GOAD.
