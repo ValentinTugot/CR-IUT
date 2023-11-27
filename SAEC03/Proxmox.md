@@ -306,5 +306,26 @@ variable "vm_disk_format" {
   default = null
 }
 ```
+<br>
+
+On peut désormais lancer la création des templates avec packer:
+
+Pour Windows 2019:
+```bash
+packer init .
+packer validate -var-file=windows_server2019_proxmox_cloudinit.pkvars.hcl .
+packer build -var-file=windows_server2019_proxmox_cloudinit.pkvars.hcl .
+```
+
+Pour Windows 2016:
+```bash
+packer validate -var-file=windows_server2016_proxmox_cloudinit.pkvars.hcl .
+packer build -var-file=windows_server2016_proxmox_cloudinit.pkvars.hcl .
+```
+<br>
+
+Enfin, on obtient sur le proxmox les templates bien crées:
+
+![template-prox](img/template.png)
 
 
