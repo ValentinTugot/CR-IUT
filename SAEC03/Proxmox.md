@@ -172,6 +172,13 @@ python3 -m pip install pywinrm
 ```
 <br>
 
+Il nous suffit maintenant de cloner le répository GOAD pour pouvoir attaquer la création de template:
+
+```bash
+cd /root
+git clone https://github.com/Orange-Cyberdefense/GOAD.git
+```
+
 ## 3. Création des templates avec Packer
 
 Dans un premier temps, il faut télécharger les iso Windows 2016 et les mettres sur le proxmox via la fonctionnalité "Download from URL", voici les liens pour télécharger les iso:
@@ -210,4 +217,33 @@ Enfin, on ajoute à notre utilisateur le rôle "Packer":
 ```bash
 pveum acl modify / -user 'infra@pve' -role Packer
 ```
- 
+<br>
+
+__Préparation de Packer__
+
+Pour que packer puisse éxecuter le script qui créer les templates, il faut lui renseigner certaines informations sur l'architecture de notre proxmox (comme l'utilisateur et le mot de passe par exemple). Pour celà on recupère le fichier d'exemple que l'on copie afin de le modifier:
+
+```bash
+cd /root/GOAD/packer/proxmox/
+cp config.auto.pkrvars.hcl.template config.auto.pkrvars.hcl
+```
+<br>
+
+Dans le fichier _config.auto.pkvars.hcl_, nous avons renseigner les informations liées à notre installation:
+
+```bash
+root@provisioning:~/GOAD/packer/proxmox# cat config.auto.pkrvars.hcl
+proxmox_url             = "https://192.168.1.1:8006/api2/json"
+proxmox_username        = "infra@pve"
+proxmox_password        = "infra"
+proxmox_skip_tls_verify = "true"
+proxmox_node            = "pvegroup2"
+proxmox_pool            = "GOAD"
+proxmox_storage         = "GOAD"
+```
+<br>
+
+__Préparation des ISO__
+
+Afin de créer des templates avec Packer et promox, il est necessaire de créer des ISO qui contiennent les différents script necessaires.<br>
+Pour faire cela, un script est disponible dans le répo git de GOAD.
