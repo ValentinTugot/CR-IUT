@@ -187,3 +187,22 @@ Cloudbase-init est un outil qui permet de lancer sur chaque VM Windows un servic
 cd /root/GOAD/packer/proxmox/scripts/sysprep
 wget https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi
 ```
+<br>
+
+__Creation d'un utilisateur dédié__
+
+Sur le serveur proxmox en SSH, on effectue les commandes suivantes pour créer un utilisateur "infra" et lui définir son mot de passe.
+
+```bash
+pveum useradd infra@pve
+pveum passwd infra@pve
+```
+<br>
+
+On ajoute maintenant des droits à notre utilisateur afin qu'il puissent déployer des VM:
+
+```bash
+pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.AllocateTemplate Datastore.Audit Datastore.AllocateSpace Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Cloudinit VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Monitor"
+```
+
+ 
