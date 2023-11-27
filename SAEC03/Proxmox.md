@@ -93,10 +93,15 @@ On configure dans un premier temps l'interface sur le bon bridge et on donne le 
 
 Ensuite, on configure l'IP pour ce VLAN:
 
-![vlan-ip](img/img/vlan10-ip.png)
+![vlan-ip](img/vlan10-ip.png)
 <br>
 
 Enfin, on configure un server DHCP pour le VLAN afin d'adresser les machines Windows durant leurs installations.
 
-![vlan-dhcp](img/img/vlan10-dhcp.png)
+![vlan-dhcp](img/vlan10-dhcp.png)
 
+## 2. Provisioning
+
+On va déployer un container linux à l'aide des CT Templates de proxmox. Pour cela, on se rends dans l'onglet CT Template, on recupère une template Ubuntu depuis l'onglet Templates en haut. Une vois la template Ubuntu téléchargé, on peut cliquer en haut à droite sur "Create CT".
+
+![ct-create](img/ct.png)
