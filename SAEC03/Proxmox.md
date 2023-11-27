@@ -3,7 +3,7 @@ Valentin Tugot
 
 Après l'installation le schéma du réseau est le suivant:
 
-![schema](./img/schema.png)
+![schema](img/schema.png)
 
 ## 1. Installation de pfSense
 
@@ -13,7 +13,7 @@ Le pare-feu pfSense permettra également d'accéder au machine de GOAD avec un a
 
 Dans un premier temps il faut configurer 3 bridges sur le proxmox pour réaliser les différents réseau (WAN, LAN, VLAN10):
 
-![bridge](1.png)
+![bridge](img/1.png)
 <br>
 
 Une fois les bridges crée, il faut créer la VM avec pfSense.<br>
@@ -29,7 +29,7 @@ Une fois la VM installé j'ai configuré les interfaces du pare-feu:
 <br>
 J'ai assigné chaque interface du pare-feu à un bridge du proxmox crée précedemment
 
-![assignement](2.png)
+![assignement](img/2.png)
 
 
 Pour les interfaces, l'adressage est le suivant:
@@ -43,7 +43,7 @@ Pour les règles de filtrage, on applique par défaut une règle qui bloque tout
 
 __Interface WAN:__
 
-![wan-fw](wan-fw.png)
+![wan-fw](img/wan-fw.png)
 
 Pour l'interface WAN on ajoute 3 règles:
 - L'accès au VPN sur le port 2137
@@ -53,14 +53,14 @@ Pour l'interface WAN on ajoute 3 règles:
 
 __Interface LAN:__
 
-![lan-fw](lan-f<.png)
+![lan-fw](img/lan-f<.png)
 
 Pour l'interface LAN on configure 1 règles (la 1ère règles et configuré automatiquement par pfSense). La règle à ajouter permet aux machines sur le réseau LAN d'accèder à Internet et à tout les autres services.
 <br>
 
 __Interface VLAN10:__
 
-![vlan-fw](vlan-fw.png)
+![vlan-fw](img/vlan-fw.png)
 
 Sur l'interface du VLAN les 3 règles ajoutés permettent:
 - D'autoriser le trafic entrant sur le VPN
@@ -89,14 +89,14 @@ iptables -t nat -A POSTROUTING -o vmbr0 -j SNAT -s 10.0.0.0/30 --to-source 10.20
 
 On configure dans un premier temps l'interface sur le bon bridge et on donne le Tag du VLAN:
 
-![vlan-int](vlan10.png)
+![vlan-int](img/vlan10.png)
 
 Ensuite, on configure l'IP pour ce VLAN:
 
-![vlan-ip](img/vlan10-ip.png)
+![vlan-ip](img/img/vlan10-ip.png)
 <br>
 
 Enfin, on configure un server DHCP pour le VLAN afin d'adresser les machines Windows durant leurs installations.
 
-![vlan-dhcp](img/vlan10-dhcp.png)
+![vlan-dhcp](img/img/vlan10-dhcp.png)
 
