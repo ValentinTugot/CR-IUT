@@ -105,3 +105,69 @@ Enfin, on configure un server DHCP pour le VLAN afin d'adresser les machines Win
 On va déployer un container linux à l'aide des CT Templates de proxmox. Pour cela, on se rends dans l'onglet CT Template, on recupère une template Ubuntu depuis l'onglet Templates en haut. Une vois la template Ubuntu téléchargé, on peut cliquer en haut à droite sur "Create CT".
 
 ![ct-create](img/ct.png)
+<br>
+
+Pendant la création du Container, il faudra configurer son IP sur le bridge vmbr2 avec une IP sur le réseau LAN (192.168.1.0/24), la gateway sera 192.168.1.2. On peut également ajouter une clé SSH directement pendant la configuration sur proxmox.
+<br>
+
+Une fois le container crée, on va installer les paquets et les logiciels requis à l'installation de GOAD sur le proxmox:
+
+__Installation des paquets utiles__
+
+```bash
+sudo apt update && apt upgrade
+
+sudo apt install git vim tmux curl gnupg software-properties-common mkisofs
+```
+<br>
+
+__Installation de Packer__
+
+Packer va servir à créer des templates des serveurs que nous allons déployer (Windows 2016 et 2019).
+
+```bash
+#Ajout du répository de packer et de sa signature
+curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt update && apt install packer
+```
+<br>
+
+__Installation de Terraform__
+
+Terraform va permettre de créer directement les VM sur le proxmox à partir d'un fichier de configuration et des templates créés par Packer.
+
+```bash
+# Installation de la signature d'Hashicorp.
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+# Verifie l'empreinte de la signature.
+gpg --no-default-keyring \
+--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+--fingerprint
+
+# Ajoute la sourcelist de terraform
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+tee /etc/apt/sources.list.d/hashicorp.list
+
+# Installe terraform
+apt update && apt install terraform
+```
+<br>
+
+__Installation d'Ansible__
+
+Une fois les VM créées par Terraform, on va utiliser Ansible afin de les configurer avec les bons domaines Active Directory, les bonnes configuration réseau et les bons services installés.
+
+```bash
+apt install python3-pip
+python3 -m pip install --upgrade pip
+python3 -m pip install ansible-core==2.12.6
+python3 -m pip install pywinrm
+```
+
+
+
