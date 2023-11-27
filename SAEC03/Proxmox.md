@@ -332,7 +332,9 @@ Enfin, on obtient sur le proxmox les templates bien crées:
 <br>
 </center>
 
-## Création des VM avec Terraform
+Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part2-packer/) est très complète.<br>
+
+## 4. Création des VM avec Terraform
 
 Pour préparer la création des VM avec terraform, il faut accorder plus de droits à notre utilisateur "infra":
 
@@ -439,3 +441,98 @@ Après un petit temps d'attente, les VM sont bien créés dans le proxmox.
 
 ![vm-creat](img/vm-work.png)
 </div>
+<br>
+
+Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part3-terraform/) est très complète.<br>
+
+## 5. Approvisionnement avec Ansible
+
+Après la création des VM, il est necessaire de les configurer avec le bon domaines, les bons serveurs, la bonne configuration réseau... Pour cela nous utiliser Ansible avec les playbooks fournit dans le repo.
+<br>
+
+Un fichier d'inventaire est deja fournit dans le repo voici un exemple:
+
+```bash
+root@provisioning:~# cat GOAD/ad/GOAD/providers/proxmox/inventory            
+[default]
+; Note: ansible_host *MUST* be an IPv4 address or setting things like DNS
+; servers will break.
+; ------------------------------------------------
+; sevenkingdoms.local
+; ------------------------------------------------
+dc01 ansible_host=192.168.10.10 dns_domain=dc01 dict_key=dc01
+;ws01 ansible_host=192.168.10.30 dns_domain=dc01 dict_key=ws01
+; ------------------------------------------------
+; north.sevenkingdoms.local
+; ------------------------------------------------
+dc02 ansible_host=192.168.10.11 dns_domain=dc01 dict_key=dc02
+srv02 ansible_host=192.168.10.22 dns_domain=dc02 dict_key=srv02
+; ------------------------------------------------
+; essos.local
+; ------------------------------------------------
+dc03 ansible_host=192.168.10.12 dns_domain=dc03 dict_key=dc03
+srv03 ansible_host=192.168.10.23 dns_domain=dc03 dict_key=srv03
+; ------------------------------------------------
+; Other
+; ------------------------------------------------
+elk ansible_host=192.168.10.50 ansible_connection=ssh
+
+[all:vars]
+; domain_name : folder inside ad/
+domain_name=GOAD
+
+force_dns_server=yes
+dns_server=192.168.10.1
+
+two_adapters=no
+; adapter created by vagrant and virtualbox (comment if you use vmware)
+nat_adapter=Ethernet Instance 0 2
+domain_adapter=Ethernet Instance 0 2
+```
+<br>
+
+__Installation des requirements Ansible__
+
+```bash
+cd /root/GOAD/ansible
+ansible-galaxy install -r requirements.yml
+```
+<br>
+
+__On lance le playbook__
+
+```bash
+cd /root/GOAD/ansible
+export ANSIBLE_COMMAND="ansible-playbook -i ../ad/GOAD/data/inventory -i ../ad/GOAD/providers/proxmox/inventory"
+../scripts/provisionning.sh
+```
+
+Durant l'installation, nous avons rencontrés des problèmes avec Ansible qui a "timeout" pendant l'installation de la base de données sur les serveurs. Le réseau ne permettant pas de télécharger assez vite, Ansible a timeout car le fichier n'était pas téléchargé. Pour remedier à cela on a du télécharger le fichier à la main le déployer dans le dossier des machines et relancer Ansible.
+<br>
+
+A la fin du playbook, on obtient le résultat suivant:
+
+![ansible](img/ansible.png)
+<br>
+
+__Snapshot des VM__
+
+Nos VM étant maintenant bien installées et configurées, on peut créer un script sur le proxmox qui viendra snapshot toutes nos VM:
+
+```bash
+root@pvegroup2:~# cat backup-vm 
+#!/bin/bash
+
+vms=("GOAD-DC01" "GOAD-DC02" "GOAD-DC03" "GOAD-SRV02" "GOAD-SRV03")
+COMMENT="after ansible"
+
+for vm in "${vms[@]}"
+do
+  echo "[+] Create snapshot for $vm"
+  id=$(qm list | grep $vm  | awk '{print $1}')
+  echo "[+] VM id is : $id"
+  qm snapshot "$id" 'snapshot-'$(date '+%Y-%m-%d--%H-%M') --vmstate 1 --description "$COMMENT"
+done
+```
+
+Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part4-ansible/) est très complète.
