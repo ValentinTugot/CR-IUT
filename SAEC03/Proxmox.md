@@ -178,6 +178,10 @@ Il nous suffit maintenant de cloner le repository GOAD pour pouvoir attaquer la 
 cd /root
 git clone https://github.com/Orange-Cyberdefense/GOAD.git
 ```
+<br>
+
+Pour plus de détails sur l'installation précédente, la documentation [suivante](https://mayfly277.github.io/posts/GOAD-on-proxmox-part1-install/#introduction) est très complète.
+<br>
 
 ## 3. Création des templates avec Packer
 
@@ -247,3 +251,60 @@ __Préparation des ISO__
 
 Afin de créer des templates avec Packer et proxmox, il est nécessaire de créer des ISO qui contiennent les différents script nécessaires.<br>
 Pour faire cela, un script est disponible dans le repo git de GOAD.
+
+```bash
+cd /root/GOAD/packer/proxmox/
+./build_proxmox_iso.sh
+```
+<br>
+
+Une fois les iso crées, il faut les déplacer sur le proxmox en se connectant sur ce dernier via SSH:
+
+```bash
+ssh 10.202.100.200
+scp root@192.168.1.3:/root/GOAD/packer/proxmox/iso/scripts_withcloudinit.iso /var/lib/vz/template/iso/scripts_withcloudinit.iso
+```
+<br>
+
+Ensuite, sur le proxmox, on viens télécharger _virtio_win.iso_. VirtIO-win contient des drivers permettant d'accéder aux appareils et au périphériques plus rapidement qu'avec ceux émulés
+
+```bash
+cd /var/lib/vz/template/iso
+wget https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+```
+<br>
+
+__Création des templates__
+
+Les fichier contenant les configuration des templates sont déjà dans le repo:
+
+Le fichier _packer.pkr.hcl_ contient la configuration des templates, on a ensuite un fichier avec la configuration des machines Windows 2019 et 2016, exemple avec le fichier _windows_server2016_proxmox_cloudinit.pkvars.hcl_:
+
+```bash
+root@provisioning:~/GOAD/packer/proxmox# cat windows_server2016_proxmox_cloudinit.pkvars.hcl 
+winrm_username = "vagrant"
+winrm_password = "vagrant"
+vm_name = "WinServer2016x64-cloudinit-qcow2"
+template_description = "Windows Server 2016 64-bit - build 14393 - template built with Packer - cloudinit - {{isotime \"2006-01-02 03:04:05\"}}"
+iso_file = "local:iso/windows_server_2016_14393.0_eval_x64.iso"
+autounattend_iso = "./iso/Autounattend_winserver2016_cloudinit.iso"
+autounattend_checksum = "sha256:d9d57151d9700b9e073e4d381b13bd9f41cba36fe2a629369aa7794d4a3ef1e8"
+vm_cpu_cores = "2"
+vm_memory = "4096"
+vm_disk_size = "40G"
+vm_sockets = "1"
+os = "win10"
+vm_disk_format = "qcow2"
+```
+<br>
+
+Lors de la création du template, il est possible de rencontrer une erreur lié au "vm_disk_format", pour régler cette erreur il faut ajouter la ligne suivante dans le fichier _variables.pkr.hcl_:
+
+```bash
+variable "vm_disk_format" {
+  type    = string
+  default = null
+}
+```
+
+
