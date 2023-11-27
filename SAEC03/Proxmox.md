@@ -102,7 +102,7 @@ Enfin, on configure un server DHCP pour le VLAN afin d'adresser les machines Win
 
 ![vlan-dhcp](img/vlan10-dhcp.png)
 
-## 2. Provisioning
+## 2. Machine d'approvisionnement
 
 On va déployer un container linux à l'aide des CT Templates de proxmox. Pour cela, on se rends dans l'onglet CT Template, on recupère une template Ubuntu depuis l'onglet Templates en haut. Une vois la template Ubuntu téléchargé, on peut cliquer en haut à droite sur "Create CT".
 
@@ -199,10 +199,15 @@ pveum passwd infra@pve
 ```
 <br>
 
-On ajoute maintenant des droits à notre utilisateur afin qu'il puissent déployer des VM:
+On ajoute maintenant un rôle Packer avec des permissions afin que les utilisateurs avec ce dernier puissent déployer des VM:
 
 ```bash
 pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.AllocateTemplate Datastore.Audit Datastore.AllocateSpace Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Cloudinit VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Monitor"
 ```
+<br>
 
+Enfin, on ajoute à notre utilisateur le rôle "Packer":
+```bash
+pveum acl modify / -user 'infra@pve' -role Packer
+```
  
