@@ -3,7 +3,7 @@ Valentin Tugot
 
 Après l'installation le schéma du réseau est le suivant:
 
-![schema](img/schema.png)
+![schema](./img/schema.png)
 
 ## 1. Installation de pfSense
 
