@@ -170,6 +170,20 @@ python3 -m pip install --upgrade pip
 python3 -m pip install ansible-core==2.12.6
 python3 -m pip install pywinrm
 ```
+<br>
 
+## 3. Création des templates avec Packer
 
+Dans un premier temps, il faut télécharger les iso Windows 2016 et les mettres sur le proxmox via la fonctionnalité "Download from URL", voici les liens pour télécharger les iso:
+- [Windows Server 2016](https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO)
+- [Windows Server 2019](https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso)
+<br>
 
+__Téléchargement de cloundbase-init__
+
+Cloudbase-init est un outil qui permet de lancer sur chaque VM Windows un service qui va récupérer les configuration du serveur proxmox afin de paramétrer Windows (comme l'ip par exemple).
+
+```bash
+cd /root/GOAD/packer/proxmox/scripts/sysprep
+wget https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi
+```
