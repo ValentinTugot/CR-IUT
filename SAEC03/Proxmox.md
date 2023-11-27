@@ -5,6 +5,8 @@ Après l'installation le schéma du réseau est le suivant:
 
 ![schema](img/schema.png)
 
+Les différentes installations suivantes ont été effectués après l'installation de proxmox (version 7.2) sur un serveur de la salle.
+
 ## 1. Installation de pfSense
 
 L'utilisation de pfSense permet d'avoir un pare-feu virtuel qui nous permet de gérer la connexion entre notre proxmox et l'environnement GOAD tout en ayant de la sécurité et différents services utiles tel que le DHCP ou le DNS.<br>
