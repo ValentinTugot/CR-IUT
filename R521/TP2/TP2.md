@@ -152,3 +152,33 @@ J'ai mis un filtre passe bande laissant passer uniquement entre 10kHz et 30kHz, 
 En pratique, le principale inconvénient des transition abruptes d'un filtre c'est la demande en puissance de calcul dans le cas de transmission SDR par exemple. Ou pour des transmissions analogique, il faudra bien plus de composants pour réaliser un filtre avec une telle transition.
 
 \newpage
+
+## 3- Réalisation d'un equalizer
+
+### 14. Réalisation du diagramme de flux de l'equalizer
+
+![Schema GNU Radio de l'equalizer](image-24.png)
+
+Les différents filtres sont placés en parallèle grâce au bloc addition. On peut les régler avec différents curseurs.
+
+### 15. Analyse de l'équalizer
+
+![Spectre fréquentielle du bruit en sortie de l'equalizer](image-25.png){width=400px}
+
+Pour obtenir ce spectre on a pour le filtre passe bas $f_c=500$Hz, pour le passe bande $f_{c1}=3$kHz et $f_{c1}=7$kHz et pour le filtre passe haut on a $f_c=15$kHz.
+
+\newpage
+
+### 16. Observation de l'equalizer sur un fichier audio
+
+![Schema Cascade en sortie](image-26.png){width=400px}
+
+On peut observer des changement au cours du temps au niveau des fréquences qui passe en changeant les différents paramètres de l'équalizer au cours du temps.
+
+![Schema GNU Radio de l'equalizer avec de l'audio](image-27.png)
+
+\newpage
+
+### 18. Conclusion
+
+Apèrs avoir écouté le fichier audio en rajoutant un bloc Wav File Sink et en modifiant les différentes valeurs des filtres. On remarque que l'on peut modifier certains paramètres du fichier audio tel que la basse, les medium et les aigus. Cela permet par exemple de masquer un instrument ou un son.
