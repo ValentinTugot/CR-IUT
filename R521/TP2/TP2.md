@@ -177,8 +177,7 @@ On peut observer des changement au cours du temps au niveau des fréquences qui 
 
 ![Schema GNU Radio de l'equalizer avec de l'audio](image-27.png)
 
-\newpage
 
 ### 18. Conclusion
 
-Apèrs avoir écouté le fichier audio en rajoutant un bloc Wav File Sink et en modifiant les différentes valeurs des filtres. On remarque que l'on peut modifier certains paramètres du fichier audio tel que la basse, les medium et les aigus. Cela permet par exemple de masquer un instrument ou un son.
+Après avoir écouté le fichier audio en rajoutant un bloc Wav File Sink et en modifiant les différentes valeurs des filtres. On remarque que l'on peut modifier certains paramètres du fichier audio tel que la basse, les medium et les aigus. Cela permet par exemple de masquer un instrument ou un son.
