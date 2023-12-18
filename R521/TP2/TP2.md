@@ -40,11 +40,11 @@ Le signal est à la fréquence de coupure du filtre, l'amplitude est desormais d
 
 Aucun signel n'est observé en sortie. En effet, 25kHz > 20kHz, le filtre ne laisse pas passer le signal.
 
-## 4. Amplitude du signal en sortie à 20kHz
+### 4. Amplitude du signal en sortie à 20kHz
 
 En sortie du filtre à 20kHz, l'amplitude du signal est de 0.5 (voir Figure 5). En effet, ce résultat est en adéquation avec nos attentes car lorsque l'on se trouve à la fréquence de coupure on perd un gain de 3dB, la puissance est divisé par 2 et l'amplitude divisé par $\sqrt{2}$.
 
-## 5. Bloc Range
+### 5. Bloc Range
 
 J'ai ajouté un bloc range pour les fréquences du signal en entrée et pour la plage de transition du filtre:
 
@@ -52,7 +52,7 @@ J'ai ajouté un bloc range pour les fréquences du signal en entrée et pour la 
 
 \newpage
 
-## 6. Etude de la plage de transition
+### 6. Etude de la plage de transition
 
 ![Signal à 16kHz](image-7.png){width=400px}
 
@@ -68,7 +68,7 @@ On remarque que si la plage de transition vaut 1kHz pour ce même signal, l'ampl
 
 En revanche, pour un signal à 19.5kHz, on remarque que l'amplitude commence à diminuer (elle n'est plus égale à 1). J'en déduis que plus la plage de transition est grande plus le filtre va couper rapidement. Mais, si la plage de transition est faible, le filtre coupera très proche de sa fréquence de coupure on aura une coupure nette.
 
-## 7. Etude d'un filtre passe bande
+### 7. Etude d'un filtre passe bande
 
 ![Schema Bloc GNU Radio (Passe Bande)](image-10.png){width=400px}
 
@@ -95,7 +95,7 @@ On obtient un signal avec 0.5 d'amplitude. Ici la diminution de l'amplitude est 
 
 \newpage
 
-## 8. Combinaison de filtre
+### 8. Combinaison de filtre
 
 ![Schema GNU Radio (Combinaison de filtre)](image-15.png){width=400px}
 
@@ -107,3 +107,48 @@ On reçoit un signal à 1 d'amplitude, c'est normal puisque 5kHZ < 7kHz < 10kHz,
 
 \newpage
 
+## 2- Caractérisation d’un filtre à l’aide d’une source de bruit blanc
+
+### 9. Génération du bruit
+
+![Evolution temporelle de l'amplitude](image-17.png){width=400px}
+
+On remarque que l'evolution de l'amplitude au cours du temps pour le bruit blanc est totalement aléatoire avec certains pics bien plus haut ou plus bas que les autres.
+
+![Evolution temporelle de la fréquence](image-18.png){width=400px}
+
+De même pour l'evolution fréquentielle du signal, avec du bruit blanc on a des fréquences aléatoires sur le spectre.
+
+\newpage
+
+### 10. Etude du filtre passe bas
+
+![Evolution fréquentielle du signal après le filtre](image-19.png)
+
+On remarque que les fréquence entre 0 et 20kHz peuvent très bien passé. Néanmoins, on remarque une coupure nette avec une chute rapide du spectre au alentour de 20kHZ cela se caractérise par la plage de transition faible (100hZ) appliqué à ce filtre.
+
+![Schema Bloc GNU Radio (Filtre + Bruit)](image-20.png)
+
+\newpage
+
+### 11. Changement de plage de transition
+
+![Spectre fréquentielle du bruit avec plage de transition à 1kHz](image-21.png){width=400px}
+
+![Spectre fréquentielle du bruit avec plage de transition à 10kHz](image-22.png){width=400px}
+
+On remarque que pour la plage de transition à 1kHz on a le spectres qui diminue d'un coup autour de la fréquence de coupure. Alors que lorsque la plage de transition est à 10kHz, le spectres diminue bien plus lentement et autour de 24kHz.
+
+\newpage
+
+### 12. Etude sur un filtre passe bande
+
+![Spectre fréquentielle en sortie du filtre passe bande](image-23.png){width=400px}
+
+J'ai mis un filtre passe bande laissant passer uniquement entre 10kHz et 30kHz, ici j'ai une plage de transition de 3kHz, on voit bien autour de 10kHz et 30kHz une diminution du spectres rapide montrant bien que les fréquence comprises dans cette intervalle passe.
+
+### 13. L'inconvénient des transition abruptes
+
+En pratique, le principale inconvénient des transition abruptes d'un filtre c'est la demande en puissance de calcul dans le cas de transmission SDR par exemple. Ou pour des transmissions analogique, il faudra bien plus de composants pour réaliser un filtre avec une telle transition.
+
+\newpage
