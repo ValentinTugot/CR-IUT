@@ -45,7 +45,7 @@ $s_1(t) = a_1(\omega_1(t) + \phi_1)$
 
 ![Exemple de Diagramme de Bode](image.png)
 
-Le Gain en Db, c'est l'amplitude du signal de sortie, sur l'amplitude du signal en entrée.
+Le Gain en dB, c'est l'amplitude du signal de sortie, sur l'amplitude du signal en entrée.
 On a : $G(dB) = 20.\log(G)$ avec $G=\frac{S}{E}$
 $G= 10^{(\frac{G_{dB}}{20})}$, on peut en déduire l'amplitude du signal en sortie: $S=G\times E$
 
@@ -68,3 +68,17 @@ Pour trouver la fréquence de coupure du filtre, on se place sur l'axe du gain e
 ### Différents types de filtres
 
 ![Exemples de filtres de base](Filtres.png){width=150px}
+
+\newpage
+
+### Ordre du filtre
+
+Pente: Pour chaque ordre on déscends de 20 dB/décade.
+
+Exemple:
+
+- Si on perd 20 dB/décade on a un filtre d'ordre 1
+- Si on perd 40 dB/décade on a un filtre d'ordre 2
+- Si on perd 100 dB/décade on a un filtre d'ordre 5
+
+Dans GNU Radio, l'ordre est défini par la transition, plus la transition est faible plus l'ordre est grand mais la consommation de processeur est plus importante.
