@@ -101,3 +101,30 @@ exit
 ```
 
 C'est bien le programme que j'avais trouvé hier dans les strings.
+
+## 01/03/2024
+
+### Analyse des strings du processus ssh.exe (pid 7328)
+
+Dans les strings du protocole ssh je fais une découverte interessant avec des fichiers sur le Bureau (qui n'apparaissent pas dans le filescan).
+
+![alt text](image-6.png)
+
+Il y a notamment le fichiers CVE-2021-1675.ps1.txt qui me saute au yeux car après une recherche il s'agit d'un script permettant la création d'un utilisateur local et de le placer dans le groups des administrateur. De la même facon que lisa.simpson à été créer. Ce script est disponible juste ici:
+
+### Analyse Wireshark
+
+172.19.3.2 -> Serveur HTTP3 avec QUIC
+
+![alt text](image-7.png)
+
+Et serveur DNS
+![alt text](image-8.png)
+
+Trafic HTTP over TLS avec 2 IP publiques: (51.159.9.95 et 18.193.121.83)
+
+![alt text](image-9.png)
+
+Serveur FTP sur 172.19.3.3 avec connexion de n.flanders.
+
+![alt text](image-10.png)
