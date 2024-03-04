@@ -128,3 +128,37 @@ Trafic HTTP over TLS avec 2 IP publiques: (51.159.9.95 et 18.193.121.83)
 Serveur FTP sur 172.19.3.3 avec connexion de n.flanders.
 
 ![alt text](image-10.png)
+
+## 04/03/2024
+
+### Wireshark FTP
+
+On remarque dans la capture Wireshark, plusieurs trames correspondantes avec des essais de credentials différents, cela ressemble à de l'attaque par dictionnaire pour trouver un accès à ce serveur. L'attaquant parvient à trouver le mot de passe de l'utilisateur n.flanders.
+
+Mot de passe incorrect:
+
+![alt text](image-11.png)
+
+Connexion réussie:
+
+![alt text](image-12.png)
+
+### Analyse du DC de l'AD
+
+On a récupéré un dump mémoire du Domain Controller ainsi que des logs evtx de ce dernier.
+
+### Analyse de la RAM
+
+On retrouve dans le pslist plusieurs processus Kryptex, après une recherche je me rends compte qu'il s'agit d'un mineur de cryptomonnaie.
+
+![alt text](image-13.png)
+
+![alt text](image-14.png)
+
+On trouve dans le netstat une connexion RDP depuis une adresse public (10.15.9.161)
+
+![alt text](image-15.png)
+
+Egalement, le DC de l'AD est connecté au serveur FTP (172.19.3.3) sur le port 22, potentiellement SSH ou SFTP ?
+
+![alt text](image-16.png)
