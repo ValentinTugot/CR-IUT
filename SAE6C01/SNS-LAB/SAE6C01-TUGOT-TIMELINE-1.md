@@ -162,3 +162,217 @@ On trouve dans le netstat une connexion RDP depuis une adresse public (10.15.9.1
 Egalement, le DC de l'AD est connecté au serveur FTP (172.19.3.3) sur le port 22, potentiellement SSH ou SFTP ?
 
 ![alt text](image-16.png)
+
+En recherchant dans les strings du dump mémoire, je cherche le terme "wallet" et j'ai trouvé une liste de wallets dans un JSON avec également une adresse email lié à ces wallets:
+
+![alt text](image-17.png)
+
+En analysant un peu plus proprement avec jq j'obtiens le fichier suivant:
+
+![alt text](image-18.png)
+
+```json
+{
+  "etc": [
+    {
+      "pool": "etc.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "",
+      "wallet": "0x529e3d7050aa576fe3ead29ca321aee2b146727f",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "eth": [
+    {
+      "pool": "ethw-eu.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "mergehappened",
+      "wallet": "0x57462e4A68F5E66012b5A3b44a6E0f19081a605d",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "nexa": [
+    {
+      "pool": "nexa.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "xxxxxx",
+      "wallet": "nexa:nqtsq5g5lny623huk5vvw2ng4kcu6zcx7vm82vku3q56j4tp",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "exp": [
+    {
+      "pool": "exp-eu.kryptex.network",
+      "port": 7000,
+      "ssl_port": 8888,
+      "password": "",
+      "wallet": "0x6117a692989732e9d2059e0f7bde2fc11878d7ed",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "erg": [
+    {
+      "pool": "erg.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "xxxxxx",
+      "wallet": "9fEqoLLD5hz2c11uA7dk5eqe1YzPEr25GrgwdR2HLCuzPqWQCz5",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "kas": [
+    {
+      "pool": "kas.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "xxxxxx",
+      "wallet": "kaspa:qp0dunq69an3m0ggls37zuq9c22pga22q9e9jzfx8sq60uzxfpq4s0saelprw",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "cfx": [
+    {
+      "pool": "cfx.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "cfx:aanypnwmrd48p2aw00v5jwxsb6puugxanyt9132tg5",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "beam": [
+    {
+      "pool": "beam-eu.kryptex.org",
+      "port": 2222,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "18bdda8a95fa392e58ba67c72d642086715a8d0fc0fc4519442d77bddef9e3045c4",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "rvn": [
+    {
+      "pool": "rvn.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "xxxxxx",
+      "wallet": "RDLBJT5S6dmuoPg26caEcimbQPKfoyG6cc",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "iron": [
+    {
+      "pool": "iron.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "3a495943b6343c392dcfff68b6e7dce3b04537127b16648939e96a6f711e03b0+002493629937d235",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "ubq": [
+    {
+      "pool": "ubq.kryptex.network",
+      "port": 7000,
+      "ssl_port": 8888,
+      "password": "xxxxxx",
+      "wallet": "0x510aec7f266557b7de753231820571b13eb31b57",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "zeph": [
+    {
+      "pool": "zeph.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "ZEPHsDAQSPbj6rzGBR4iXk53A1eunD7eVhdeL1MtY88HYT69ESZyxpz6LARmyZGXY9bNkzhYAGgP2Y61QKmngLaaWhitSPTr2NT",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "xna": [
+    {
+      "pool": "xna.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "NXqz5orivhjZ78A27DytgHDcVn5xGhpAvb",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "clore": [
+    {
+      "pool": "clore.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "AKprsS3mpxdVYMWpC6FSg5hV7inmWAoMfk",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "pyi": [
+    {
+      "pool": "pyi.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "pyrin:qqh5n82gmptaaxsdrq8sm08px2vhql4c462syryl6n020v3qaju3uycr4tvmm",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "kls": [
+    {
+      "pool": "kls.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "karlsen:qzj3vtrsdq6td7a2dpnlv0l5zh70t3v8mpczv679zhjvjcut94n022hxw06h7",
+      "worker_id": "v2e5e9b76a"
+    }
+  ],
+  "xmr": [
+    {
+      "pool": "xmr.kryptex.network",
+      "port": 7777,
+      "ssl_port": 8888,
+      "password": "x",
+      "wallet": "4DSQMNzzq46N1z2pZWAVdeA6JvUL9TCB2bnBiA3ZzoqEdYJnMydt5akCa3vtmapeDsbVKGPFdNkzqTcJS8M8oyK7WGj2eezRPM372XRSQi",
+      "worker_id": "v2e5e9b76a"
+    }
+  ]
+}
+```
+
+Cette liste de wallet est contenu dans un fichier JSON bien plus grand, dans ce plus grand fichier on peut lire les champs suivants:
+
+```json
+{"state":{"auth":{"token":true,"username":"tahiti.bob.pro@outlook.com"}
+```
+
+![alt text](image-19.png)
+
+En tentant de créer un compte sur le site de Kryptex pour vérifier que l'email appartient bien à un compte sur cette plateforme, je m'apperçois que c'est bien le cas, l'email semble bien être associé à un compte Kryptex.
+
+## 05/03/2024
+
+### Analyse des logs evtx
+
+J'utilise chainsaw pour analyser les logs evtx en filtrant avec les règles sigma et obtenir un résultat en csv:
+
+![alt text](image-20.png)
+
+On retrouve 64 fois l'alertes "LSASS Access From Non System Accoun" dans le logs de sécurité.
+![alt text](image-21.png)
+
+Selon Splunk, il peut s'agir d'une tentative de dump des informations de connexion ou alors des applications qui ont besoins d'y accéder.
+
+![alt text](image-22.png)
+
+Ensuite, on retrouve 330 alertes "Active Directory Replication from Non Machine Account;Mimikatz DC Sync" portant l'Event ID 4662. Depuis l'utilisateur n.flanders
+
+![alt text](image-23.png)
+
+Il s'agit probablement d'un attaque DCSync utilisable avec Mimikatz.
