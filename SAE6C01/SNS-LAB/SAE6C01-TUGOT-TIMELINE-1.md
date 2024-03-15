@@ -364,7 +364,7 @@ J'utilise chainsaw pour analyser les logs evtx en filtrant avec les règles sigm
 
 ![alt text](image-20.png)
 
-On retrouve 64 fois l'alertes "LSASS Access From Non System Accoun" dans le logs de sécurité.
+On retrouve 64 fois l'alertes "LSASS Access From Non System Account" dans le logs de sécurité.
 ![alt text](image-21.png)
 
 Selon Splunk, il peut s'agir d'une tentative de dump des informations de connexion ou alors des applications qui ont besoins d'y accéder.
@@ -376,3 +376,25 @@ Ensuite, on retrouve 330 alertes "Active Directory Replication from Non Machine 
 ![alt text](image-23.png)
 
 Il s'agit probablement d'un attaque DCSync utilisable avec Mimikatz.
+
+## 07/03/2024
+
+### Analyse de la persistence
+
+On remarque l'ajout du compte tahiti.bob sur le DC dans les logs evtx.
+
+![alt text](image-24.png)
+
+Egalement, en observant les différents moyen de persistence sous windows sur le site suivant: [https://swisskyrepo.github.io/InternalAllTheThings/redteam/persistence/windows-persistence/].
+
+J'observe que:
+
+![alt text](image-25.png)
+
+L'un des moyen de persistence cité est de mettre un fichier batch dans le répértoire C:\Users\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup et on observant les strings du dump mémoire de Ned Flanders je me suis rendu compte que le script autologon.bat sevant à créer la connexion SSH proxy était dans ce répérotire.
+
+![alt text](image-26.png)
+
+Je peux également voir qu'en plus d'etre dans ce répértoire c'est bien le fichier qui ouvre la connexion tunnel SSH vers le serveur distant de l'attaquant.
+
+Enfin, la création du compte lisa.simpson sur la machine de Ned Flanders est un autre moyen de persistence.
